@@ -10,6 +10,7 @@
 #include "../filters/filter.h"
 
 #include "../1_task/seq.h"
+#include "../2_task/mt.h"
 
 int main()
 {
@@ -28,7 +29,7 @@ int main()
     struct filter *filter = init_sharpen();
 
     seq_convolution(data, w, h, *filter);
-
+    pthread_convolution(data, w, h, *filter, 3);
     filter_free(filter);
 
     // stbi_write_png("../images/result.png", w, h, 3, data, w * 3);
