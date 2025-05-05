@@ -1,18 +1,9 @@
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-
 #include <stdio.h>
-#include "../libs/stb_image.h"
-#include "../libs/stb_image_write.h"
 #include "../filters/filter.h"
 #include "math.h"
-
-typedef struct
-{
-    char r;
-    char g;
-    char b;
-} pixel_struct;
+#include <string.h>
+#include <stdlib.h>
+#include "seq.h"
 
 void inverse_image(unsigned char *pixel_array, size_t pixel_count)
 {
@@ -25,7 +16,7 @@ void inverse_image(unsigned char *pixel_array, size_t pixel_count)
     }
 }
 
-void convolution(unsigned char *pixel_array, int w, int h, struct filter filter)
+void seq_convolution(unsigned char *pixel_array, int w, int h, struct filter filter)
 {
     struct pixel
     {
@@ -64,26 +55,4 @@ void convolution(unsigned char *pixel_array, int w, int h, struct filter filter)
 
     memcpy(pixel_array, result, w * h * 3);
     free(result);
-}
-
-int main()
-{
-    int w, h, n;
-
-    unsigned char *data = stbi_load("/home/dabzelos/Desktop/paralelki/images/mypersonalphoto.bmp", &w, &h, &n, 3);
-    printf("%d %d %d\n", w, h, n);
-
-    if (data == NULL)
-    {
-        printf("naaah we trippin");
-
-        return 0;
-    }
-
-    struct filter *filter = init_motion_from_top_left();
-
-    convolution(data, w, h, *filter);
-
-    // stbi_write_png("../images/result.png", w, h, 3, data, w * 3);
-    stbi_write_bmp("/home/dabzelos/Desktop/paralelki/images/result.bmp", w, h, 3, data);
 }

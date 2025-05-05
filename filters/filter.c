@@ -103,7 +103,7 @@ struct filter *init_blur_soft()
 struct filter *init_blur()
 {
     int size = 5;
-    double doubleCoeff = 1.0;
+    double doubleCoeff = 1.0 / 13.0;
     double bias = 0.0;
     return filter_init(size, bias, doubleCoeff, blur_matrix);
 }

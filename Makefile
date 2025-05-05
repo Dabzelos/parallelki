@@ -3,12 +3,10 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g -I./filters -I./libs
 
 # Пути
-SRC_DIR = 1_task
 FILTERS_DIR = filters
-BIN = $(SRC_DIR)/seq_filters_apply
-IMG = 
+BIN = govnishko
 # Исходники
-SRC = $(SRC_DIR)/seq_filters_apply.c $(FILTERS_DIR)/filter.c
+SRC = 1_task/seq_convo.c 2_task/mt_by_row.c filters/filter.c main.c
 
 # Сборка
 all: $(BIN)
