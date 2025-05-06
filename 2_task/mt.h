@@ -11,4 +11,11 @@ typedef struct
     atomic_int *shared_counter; // <--- указатель на атомарный счётчик
 } thread_args;
 
-void pthread_convolution(unsigned char *pixel_array, int w, int h, struct filter filter, int num_threads);
+typedef enum
+{
+    MODE_ROW,
+    MODE_COLUMN,
+    MODE_PIXEL
+} ConvolutionMode;
+
+void pthread_convolution(unsigned char *pixel_array, int w, int h, struct filter filter, int num_threads, ConvolutionMode mode);
