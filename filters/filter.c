@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "filter.h"
+#include <string.h>
 
 const double motion_blur_matrix[9][9] = {
     {1, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -142,8 +143,8 @@ struct filter *init_sharpen()
 
 void pprint_filter(struct filter *filter)
 {
-    printf("Factor: %.2f\n", filter->doubleCoeff);
-    printf("Bias: %.2f\n", filter->bias);
+    printf("Factor: %2f\n", filter->doubleCoeff);
+    printf("Bias: %2f\n", filter->bias);
     printf("Size of filter matrix: %d\n", filter->size);
 
     printf("Matrix of filter: \n");
@@ -151,7 +152,7 @@ void pprint_filter(struct filter *filter)
     {
         for (int j = 0; j < filter->size; j++)
         {
-            printf("%8.2f ", filter->matrix[i][j]);
+            printf("%.2f ", filter->matrix[i][j]);
         }
         printf("\n");
     }
@@ -169,4 +170,49 @@ void filter_free(struct filter *f)
     free(f->matrix);
 
     free(f);
+}
+
+struct filter *filter_composition(struct filter *f1, struct filter *f2)
+{
+    int size_1 = f1->size;
+    int size_2 = f2->size;
+
+    int r_size = size_1 + size_2 - 1;
+    double r_doubleCoeff = f1->doubleCoeff * f2->doubleCoeff;
+
+    double sum_f2 = 0.0;
+    for (int y = 0; y < size_2; y++)
+    {
+        for (int x = 0; x < size_2; x++)
+        {
+            sum_f2 += f2->matrix[y][x];
+        }
+    }
+
+    double r_bias = f2->bias + f2->doubleCoeff * f1->bias * sum_f2;
+
+    double **matrix = malloc(r_size * sizeof(double *));
+
+    for (int i = 0; i < r_size; i++)
+    {
+        matrix[i] = calloc(r_size, sizeof(double));
+    }
+
+    for (int y1 = 0; y1 < size_1; y1++)
+    {
+        for (int x1 = 0; x1 < size_1; x1++)
+        {
+            for (int y2 = 0; y2 < size_2; y2++)
+            {
+                for (int x2 = 0; x2 < size_2; x2++)
+                {
+                    int ry = y1 + y2;
+                    int rx = x1 + x2;
+                    matrix[ry][rx] += f1->matrix[y1][x1] * f2->matrix[y2][x2];
+                }
+            }
+        }
+    }
+
+    return filter_init(r_size, r_bias, r_doubleCoeff, matrix);
 }

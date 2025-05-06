@@ -18,14 +18,15 @@ void inverse_image(unsigned char *pixel_array, size_t pixel_count)
 
 void seq_convolution(unsigned char *pixel_array, int w, int h, struct filter filter)
 {
+#pragma pack(1)
     struct pixel
     {
-        unsigned char r;
-        unsigned char g;
-        unsigned char b;
+        unsigned char r, g, b;
     };
+#pragma pack()
 
-    struct pixel *result = malloc(w * h * 3);
+    struct pixel *result = malloc(w * h * sizeof(struct pixel));
+
     struct pixel *image = (struct pixel *)pixel_array;
 
     for (int x = 0; x < w; x++)
@@ -47,9 +48,9 @@ void seq_convolution(unsigned char *pixel_array, int w, int h, struct filter fil
                 }
             }
 
-            result[(y * w + x)].r = fmin(fmax((int)(filter.doubleCoeff * red + filter.bias), 0), 255);
-            result[(y * w + x)].g = fmin(fmax((int)(filter.doubleCoeff * green + filter.bias), 0), 255);
-            result[(y * w + x)].b = fmin(fmax((int)(filter.doubleCoeff * blue + filter.bias), 0), 255);
+            result[(y * w + x)].r = fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
+            result[(y * w + x)].g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
+            result[(y * w + x)].b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
         }
     }
 

@@ -27,3 +27,5 @@ struct filter *init_sharpen();
 void filter_free(struct filter *f);
 
 void pprint_filter(struct filter *filter);
+
+struct filter *filter_composition(struct filter *f1, struct filter *f2);

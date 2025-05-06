@@ -11,10 +11,12 @@ void *thread_convolve_by_row(void *arg)
     struct filter filter = args->filter;
 
     // TODO вынести это в какой то общий .h, тк каждый раз пользуюсь пикселем
+#pragma pack(1)
     struct pixel
     {
         unsigned char r, g, b;
     };
+#pragma pack()
 
     struct pixel *input = (struct pixel *)args->input;
     struct pixel *output = (struct pixel *)args->output;
@@ -23,6 +25,51 @@ void *thread_convolve_by_row(void *arg)
     while ((y = atomic_fetch_add(args->shared_counter, 1)) < h)
     {
         for (int x = 0; x < w; x++)
+        {
+            double red = 0.0, green = 0.0, blue = 0.0;
+
+            for (int fy = 0; fy < filter.size; fy++)
+            {
+                for (int fx = 0; fx < filter.size; fx++)
+                {
+                    int ix = (x - filter.size / 2 + fx + w) % w;
+                    int iy = (y - filter.size / 2 + fy + h) % h;
+
+                    struct pixel p = input[iy * w + ix];
+                    red += p.r * filter.matrix[fy][fx];
+                    green += p.g * filter.matrix[fy][fx];
+                    blue += p.b * filter.matrix[fy][fx];
+                }
+            }
+
+            struct pixel *dest = &output[y * w + x];
+            dest->r = fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
+            dest->g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
+            dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
+        }
+    }
+}
+
+void *thread_convolve_by_collumn(void *arg)
+{
+    thread_args *args = (thread_args *)arg;
+    int w = args->w, h = args->h;
+    struct filter filter = args->filter;
+
+#pragma pack(1)
+    struct pixel
+    {
+        unsigned char r, g, b;
+    };
+#pragma pack()
+
+    struct pixel *input = (struct pixel *)args->input;
+    struct pixel *output = (struct pixel *)args->output;
+
+    int x;
+    while ((x = atomic_fetch_add(args->shared_counter, 1)) < w)
+    {
+        for (int y = 0; y < h; y++)
         {
             double red = 0, green = 0, blue = 0;
 
@@ -41,58 +88,11 @@ void *thread_convolve_by_row(void *arg)
             }
 
             struct pixel *dest = &output[y * w + x];
-            dest->r = fmin(fmax((int)(filter.doubleCoeff * red + filter.bias), 0), 255);
-            dest->g = fmin(fmax((int)(filter.doubleCoeff * green + filter.bias), 0), 255);
-            dest->b = fmin(fmax((int)(filter.doubleCoeff * blue + filter.bias), 0), 255);
+            dest->r = fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
+            dest->g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
+            dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
         }
     }
-
-    return NULL;
-}
-
-void *thread_convolve_by_collumn(void *arg)
-{
-    thread_args *args = (thread_args *)arg;
-    int w = args->w, h = args->h;
-    struct filter filter = args->filter;
-
-    struct pixel
-    {
-        unsigned char r, g, b;
-    };
-
-    struct pixel *input = (struct pixel *)args->input;
-    struct pixel *output = (struct pixel *)args->output;
-
-    int x;
-    while ((x = atomic_fetch_add(args->shared_counter, 1)) < w)
-    {
-        for (int y = 0; y < h; y++)
-        {
-            double red = 0, green = 0, blue = 0;
-
-            for (int fy = 0; fy < filter.size; fy++)
-            {
-                for (int fx = 0; fx < filter.size; fx++)
-                {
-                    int ix = (x - filter.size / 2 + fx + w) % w;
-                    int iy = (y - filter.size / 2 + fy + h) % w;
-
-                    struct pixel p = input[iy * w + ix];
-                    red += p.r * filter.matrix[fy][fx];
-                    green += p.g * filter.matrix[fy][fx];
-                    blue += p.b * filter.matrix[fy][fx];
-                }
-            }
-
-            struct pixel *dest = &output[y * w + x];
-            dest->r = fmin(fmax((int)(filter.doubleCoeff * red + filter.bias), 0), 255);
-            dest->g = fmin(fmax((int)(filter.doubleCoeff * green + filter.bias), 0), 255);
-            dest->b = fmin(fmax((int)(filter.doubleCoeff * blue + filter.bias), 0), 255);
-        }
-    }
-
-    return NULL;
 }
 
 void *thread_convolve_by_pixel(void *arg)
@@ -101,10 +101,12 @@ void *thread_convolve_by_pixel(void *arg)
     int w = args->w, h = args->h;
     struct filter filter = args->filter;
 
+#pragma pack(1)
     struct pixel
     {
         unsigned char r, g, b;
     };
+#pragma pack()
 
     struct pixel *input = (struct pixel *)args->input;
     struct pixel *output = (struct pixel *)args->output;
@@ -132,12 +134,10 @@ void *thread_convolve_by_pixel(void *arg)
         }
 
         struct pixel *dest = &output[y * w + x];
-        dest->r = fmin(fmax((int)(filter.doubleCoeff * red + filter.bias), 0), 255);
-        dest->g = fmin(fmax((int)(filter.doubleCoeff * green + filter.bias), 0), 255);
-        dest->b = fmin(fmax((int)(filter.doubleCoeff * blue + filter.bias), 0), 255);
+        dest->r = fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
+        dest->g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
+        dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
     }
-
-    return NULL;
 }
 
 void pthread_convolution(unsigned char *pixel_array, int w, int h,

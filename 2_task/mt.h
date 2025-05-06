@@ -8,7 +8,7 @@ typedef struct
     unsigned char *input;
     unsigned char *output;
     struct filter filter;
-    atomic_int *shared_counter; // <--- указатель на атомарный счётчик
+    atomic_int *shared_counter;
 } thread_args;
 
 typedef enum
