@@ -3,3 +3,5 @@ images
 .bmp
 
 *.out
+
+*.vscode

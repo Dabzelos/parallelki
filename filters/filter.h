@@ -1,31 +1,38 @@
 #pragma once
 
-struct filter
+#pragma pack(push, 1)
+typedef struct
+{
+    unsigned char r, g, b;
+} pixel;
+#pragma pack(pop)
+
+typedef struct
 {
     double doubleCoeff;
     double bias;
     double **matrix;
     int size;
-};
+} filter;
 
-void pprint_filter(struct filter *filter);
+void pprint_filter(filter *filter);
 
-struct filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size]);
+filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size]);
 
-struct filter *init_motion_from_top_left();
+filter *init_motion_from_top_left();
 
-struct filter *init_blur_soft();
+filter *init_blur_soft();
 
-struct filter *init_blur();
+filter *init_blur();
 
-struct filter *init_gauss_smal_blur();
+filter *init_gauss_smal_blur();
 
-struct filter *init_gauss_big_blur();
+filter *init_gauss_big_blur();
 
-struct filter *init_sharpen();
+filter *init_sharpen();
 
-void filter_free(struct filter *f);
+void filter_free(filter *f);
 
-void pprint_filter(struct filter *filter);
+void pprint_filter(filter *filter);
 
-struct filter *filter_composition(struct filter *f1, struct filter *f2);
+filter *filter_composition(filter *f1, filter *f2);

@@ -5,29 +5,11 @@
 #include <stdlib.h>
 #include "seq.h"
 
-void inverse_image(unsigned char *pixel_array, size_t pixel_count)
+void seq_convolution(unsigned char *pixel_array, int w, int h, filter filter)
 {
-    for (size_t i = 0; i < pixel_count; i++)
-    {
-        pixel_struct *pixel = (pixel_struct *)(&pixel_array[i * 3]);
-        pixel->r = 255 - pixel->r;
-        pixel->g = 255 - pixel->g;
-        pixel->b = 255 - pixel->b;
-    }
-}
+    pixel *result = malloc(w * h * sizeof(pixel));
 
-void seq_convolution(unsigned char *pixel_array, int w, int h, struct filter filter)
-{
-#pragma pack(1)
-    struct pixel
-    {
-        unsigned char r, g, b;
-    };
-#pragma pack()
-
-    struct pixel *result = malloc(w * h * sizeof(struct pixel));
-
-    struct pixel *image = (struct pixel *)pixel_array;
+    pixel *image = (pixel *)pixel_array;
 
     for (int x = 0; x < w; x++)
     {

@@ -48,9 +48,9 @@ const double sharpen_matrix[3][3] = {
     {-1, 9, -1},
     {-1, -1, -1}};
 
-struct filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size])
+filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size])
 {
-    struct filter *f = malloc(sizeof(struct filter));
+    filter *f = malloc(sizeof(filter));
     f->bias = bias;
     f->doubleCoeff = doubleCoeff;
     f->size = size;
@@ -85,7 +85,7 @@ struct filter *filter_init(int size, double bias, double doubleCoeff, const doub
     return f;
 }
 
-struct filter *init_motion_from_top_left()
+filter *init_motion_from_top_left()
 {
     int size = 9;
     double doubleCoeff = 1.0 / 9.0;
@@ -93,7 +93,7 @@ struct filter *init_motion_from_top_left()
     return filter_init(size, bias, doubleCoeff, motion_blur_matrix);
 }
 
-struct filter *init_blur_soft()
+filter *init_blur_soft()
 {
     int size = 3;
     double doubleCoeff = 1.0;
@@ -101,7 +101,7 @@ struct filter *init_blur_soft()
     return filter_init(size, bias, doubleCoeff, blur_soft_matrix);
 }
 
-struct filter *init_blur()
+filter *init_blur()
 {
     int size = 5;
     double doubleCoeff = 1.0 / 13.0;
@@ -109,7 +109,7 @@ struct filter *init_blur()
     return filter_init(size, bias, doubleCoeff, blur_matrix);
 }
 
-struct filter *init_gauss_smal_blur()
+filter *init_gauss_smal_blur()
 {
     int size = 3;
     double doubleCoeff = 1.0 / 16.0;
@@ -117,7 +117,7 @@ struct filter *init_gauss_smal_blur()
     return filter_init(size, bias, doubleCoeff, gaussian_small_blur_matrix);
 }
 
-struct filter *init_gauss_big_blur()
+filter *init_gauss_big_blur()
 {
     int size = 5;
     double doubleCoeff = 1.0 / 256.0;
@@ -125,7 +125,7 @@ struct filter *init_gauss_big_blur()
     return filter_init(size, bias, doubleCoeff, gaussian_big_blur_matrix);
 }
 
-struct filter *init_id()
+filter *init_id()
 {
     int size = 3;
     double doubleCoeff = 1.0;
@@ -133,7 +133,7 @@ struct filter *init_id()
     return filter_init(size, bias, doubleCoeff, ID_matrix);
 }
 
-struct filter *init_sharpen()
+filter *init_sharpen()
 {
     int size = 3;
     double doubleCoeff = 1.0;
@@ -141,7 +141,7 @@ struct filter *init_sharpen()
     return filter_init(size, bias, doubleCoeff, sharpen_matrix);
 }
 
-void pprint_filter(struct filter *filter)
+void pprint_filter(filter *filter)
 {
     printf("Factor: %2f\n", filter->doubleCoeff);
     printf("Bias: %2f\n", filter->bias);
@@ -158,7 +158,7 @@ void pprint_filter(struct filter *filter)
     }
 }
 
-void filter_free(struct filter *f)
+void filter_free(filter *f)
 {
     if (!f)
         return;
@@ -172,7 +172,7 @@ void filter_free(struct filter *f)
     free(f);
 }
 
-struct filter *filter_composition(struct filter *f1, struct filter *f2)
+filter *filter_composition(filter *f1, filter *f2)
 {
     int size1 = f1->size;
     int size2 = f2->size;

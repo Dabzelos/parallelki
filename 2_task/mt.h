@@ -7,7 +7,7 @@ typedef struct
     int w, h;
     unsigned char *input;
     unsigned char *output;
-    struct filter filter;
+    filter filter;
     atomic_int *shared_counter;
 } thread_args;
 
@@ -18,4 +18,4 @@ typedef enum
     MODE_PIXEL
 } ConvolutionMode;
 
-void pthread_convolution(unsigned char *pixel_array, int w, int h, struct filter filter, int num_threads, ConvolutionMode mode);
+void pthread_convolution(unsigned char *pixel_array, int w, int h, filter filter, int num_threads, ConvolutionMode mode);
