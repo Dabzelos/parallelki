@@ -66,7 +66,7 @@ struct filter *filter_init(int size, double bias, double doubleCoeff, const doub
     {
         f->matrix[i] = malloc(size * sizeof(double));
 
-        if (!f->matrix)
+        if (!f->matrix[i])
         {
             for (int j = 0; j < i; ++j)
                 free(f->matrix[j]);
@@ -174,45 +174,49 @@ void filter_free(struct filter *f)
 
 struct filter *filter_composition(struct filter *f1, struct filter *f2)
 {
-    int size_1 = f1->size;
-    int size_2 = f2->size;
+    int size1 = f1->size;
+    int size2 = f2->size;
+    int new_size = size1 + size2 - 1;
 
-    int r_size = size_1 + size_2 - 1;
-    double r_doubleCoeff = f1->doubleCoeff * f2->doubleCoeff;
+    double tmp[new_size][new_size];
 
-    double sum_f2 = 0.0;
-    for (int y = 0; y < size_2; y++)
+    for (int i = 0; i < new_size; i++)
+        for (int j = 0; j < new_size; j++)
+            tmp[i][j] = 0.0;
+
+    for (int i = 0; i < new_size; i++)
     {
-        for (int x = 0; x < size_2; x++)
+        for (int j = 0; j < new_size; j++)
         {
-            sum_f2 += f2->matrix[y][x];
-        }
-    }
-
-    double r_bias = f2->bias + f2->doubleCoeff * f1->bias * sum_f2;
-
-    double **matrix = malloc(r_size * sizeof(double *));
-
-    for (int i = 0; i < r_size; i++)
-    {
-        matrix[i] = calloc(r_size, sizeof(double));
-    }
-
-    for (int y1 = 0; y1 < size_1; y1++)
-    {
-        for (int x1 = 0; x1 < size_1; x1++)
-        {
-            for (int y2 = 0; y2 < size_2; y2++)
+            for (int y1 = 0; y1 < size1; y1++)
             {
-                for (int x2 = 0; x2 < size_2; x2++)
+                for (int x1 = 0; x1 < size1; x1++)
                 {
-                    int ry = y1 + y2;
-                    int rx = x1 + x2;
-                    matrix[ry][rx] += f1->matrix[y1][x1] * f2->matrix[y2][x2];
+                    int y2 = i - y1;
+                    int x2 = j - x1;
+
+                    if (y2 >= 0 && y2 < size2 && x2 >= 0 && x2 < size2)
+                    {
+                        tmp[i][j] += f1->matrix[y1][x1] * f2->matrix[y2][x2];
+                    }
                 }
             }
         }
     }
 
-    return filter_init(r_size, r_bias, r_doubleCoeff, matrix);
+    double sum = 0.0;
+    for (int i = 0; i < new_size; i++)
+        for (int j = 0; j < new_size; j++)
+            sum += tmp[i][j];
+
+    double new_coeff = (sum != 0.0) ? 1.0 / sum : 1.0;
+
+    double sum_f2 = 0.0;
+    for (int i = 0; i < size2; i++)
+        for (int j = 0; j < size2; j++)
+            sum_f2 += f2->matrix[i][j];
+
+    double new_bias = f2->bias + f2->doubleCoeff * f1->bias * sum_f2;
+
+    return filter_init(new_size, new_bias, new_coeff, tmp);
 }

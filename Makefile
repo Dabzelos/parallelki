@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -g -I./filters -I./libs
 
 # Пути
 FILTERS_DIR = filters
-BIN = govnishko
+BIN = shi.out
 # Исходники
 SRC = 1_task/seq_convo.c 2_task/mt_by_row.c filters/filter.c main.c
 

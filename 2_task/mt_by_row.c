@@ -48,6 +48,8 @@ void *thread_convolve_by_row(void *arg)
             dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
         }
     }
+
+    return NULL;
 }
 
 void *thread_convolve_by_collumn(void *arg)
@@ -93,6 +95,8 @@ void *thread_convolve_by_collumn(void *arg)
             dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
         }
     }
+
+    return NULL;
 }
 
 void *thread_convolve_by_pixel(void *arg)
@@ -138,6 +142,8 @@ void *thread_convolve_by_pixel(void *arg)
         dest->g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
         dest->b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
     }
+
+    return NULL;
 }
 
 void pthread_convolution(unsigned char *pixel_array, int w, int h,
