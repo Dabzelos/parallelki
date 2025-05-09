@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -g -I./filters -I./libs
 FILTERS_DIR = filters
 BIN = shi.out
 # Исходники
-SRC = 1_task/seq_convo.c 2_task/mt_by_row.c filters/filter.c main.c
+SRC = 1_task/seq_convo.c 2_task/mt_by_row.c filters/filter.c main.c tests/utils/test_utils.c
 
 # Сборка
 all: $(BIN)

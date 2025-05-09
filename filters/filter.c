@@ -220,3 +220,40 @@ filter *filter_composition(filter *f1, filter *f2)
 
     return filter_init(new_size, new_bias, new_coeff, tmp);
 }
+
+filter *append_filter_matrix_with_zeros(int appendix, filter *f)
+{
+    int size = f->size;
+    double new_matrix[2 * appendix + size][2 * appendix + size];
+    memset(new_matrix, 0.0, sizeof(new_matrix));
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            new_matrix[i + appendix][j + appendix] = f->matrix[i][j];
+        }
+    }
+
+    filter *new_filter = filter_init(size + 2 * appendix, f->bias, f->doubleCoeff, new_matrix);
+
+    return new_filter;
+}
+
+filter *generate_random_filter(int size)
+{
+    double matrix[size][size];
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            matrix[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+        }
+    }
+
+    double bias = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+    double coeff = ((double)rand() / RAND_MAX) * 2.0;
+
+    return filter_init(size, bias, coeff, matrix);
+}
