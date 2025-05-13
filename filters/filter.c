@@ -213,47 +213,74 @@ filter *filter_composition(filter *f1, filter *f2)
     int size2 = f2->size;
     int new_size = size1 + size2 - 1;
 
-    double tmp[new_size][new_size];
+    double **new_matrix = (double **)malloc(new_size * sizeof(double *));
+    if (new_matrix == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for new matrix\n");
+        return NULL;
+    }
 
     for (int i = 0; i < new_size; i++)
+    {
+        new_matrix[i] = (double *)malloc(new_size * sizeof(double));
+        if (new_matrix[i] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed for matrix row\n");
+            for (int j = 0; j < i; j++)
+            {
+                free(new_matrix[j]);
+            }
+            free(new_matrix);
+            return NULL;
+        }
+
         for (int j = 0; j < new_size; j++)
-            tmp[i][j] = 0.0;
+        {
+            new_matrix[i][j] = 0.0;
+        }
+    }
 
     for (int i = 0; i < new_size; i++)
     {
         for (int j = 0; j < new_size; j++)
         {
-            for (int y1 = 0; y1 < size1; y1++)
+            for (int fi = 0; fi < size1; fi++)
             {
-                for (int x1 = 0; x1 < size1; x1++)
+                for (int fj = 0; fj < size1; fj++)
                 {
-                    int y2 = i - y1;
-                    int x2 = j - x1;
+                    int i2 = i - fi;
+                    int j2 = j - fj;
 
-                    if (y2 >= 0 && y2 < size2 && x2 >= 0 && x2 < size2)
+                    if (i2 >= 0 && i2 < size2 && j2 >= 0 && j2 < size2)
                     {
-                        tmp[i][j] += f1->matrix[y1][x1] * f2->matrix[y2][x2];
+                        new_matrix[i][j] += f1->matrix[fi][fj] * f2->matrix[i2][j2];
                     }
                 }
             }
         }
     }
 
-    double sum = 0.0;
-    for (int i = 0; i < new_size; i++)
-        for (int j = 0; j < new_size; j++)
-            sum += tmp[i][j];
+    double new_factor = f1->doubleCoeff * f2->doubleCoeff;
+    double new_bias = f1->bias * f2->doubleCoeff + f2->bias;
 
-    double new_coeff = (sum != 0.0) ? 1.0 / sum : 1.0;
+    filter *composed = (filter *)malloc(sizeof(filter));
+    if (composed == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for filter\n");
+        for (int i = 0; i < new_size; i++)
+        {
+            free(new_matrix[i]);
+        }
+        free(new_matrix);
+        return NULL;
+    }
 
-    double sum_f2 = 0.0;
-    for (int i = 0; i < size2; i++)
-        for (int j = 0; j < size2; j++)
-            sum_f2 += f2->matrix[i][j];
+    composed->size = new_size;
+    composed->doubleCoeff = new_factor;
+    composed->bias = new_bias;
+    composed->matrix = new_matrix;
 
-    double new_bias = f2->bias + f2->doubleCoeff * f1->bias * sum_f2;
-
-    return filter_init(new_size, new_bias, new_coeff, tmp);
+    return composed;
 }
 
 filter *append_filter_matrix_with_zeros(int appendix, filter *f)
@@ -278,36 +305,47 @@ filter *append_filter_matrix_with_zeros(int appendix, filter *f)
 filter *generate_random_filter(int size)
 {
     filter *random_filter = (filter *)malloc(sizeof(filter));
-    if (random_filter == NULL)
-    {
-        fprintf(stderr, "Memory allocation failed for filter\n");
-        exit(1);
-    }
+    if (!random_filter)
+        return NULL;
 
     random_filter->size = size;
-
     random_filter->matrix = (double **)malloc(size * sizeof(double *));
-    if (random_filter->matrix == NULL)
+    if (!random_filter->matrix)
     {
-        fprintf(stderr, "Memory allocation failed for matrix\n");
-        exit(1);
+        free(random_filter);
+        return NULL;
     }
 
+    double sum = 0.0;
     for (int i = 0; i < size; i++)
     {
         random_filter->matrix[i] = (double *)malloc(size * sizeof(double));
-        if (random_filter->matrix[i] == NULL)
+        if (!random_filter->matrix[i])
         {
-            fprintf(stderr, "Memory allocation failed for matrix row\n");
-            exit(1);
+            for (int j = 0; j < i; j++)
+                free(random_filter->matrix[j]);
+            free(random_filter->matrix);
+            free(random_filter);
+            return NULL;
         }
 
         for (int j = 0; j < size; j++)
         {
             random_filter->matrix[i][j] = MIN_FACTOR + ((double)rand() / RAND_MAX) * (MAX_FACTOR - MIN_FACTOR);
+            sum += random_filter->matrix[i][j];
         }
     }
 
+    if (sum != 0.0)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                random_filter->matrix[i][j] /= sum;
+            }
+        }
+    }
     random_filter->doubleCoeff = MIN_FACTOR + ((double)rand() / RAND_MAX) * (MAX_FACTOR - MIN_FACTOR);
 
     random_filter->bias = 0.0;

@@ -219,7 +219,84 @@ void test_opposite_shift_filters_composition_gives_id()
 
 void test_id_filter()
 {
+    int w, h, n;
+
+    unsigned char *original_data = stbi_load("images/mypersonalphoto.bmp", &w, &h, &n, 3);
+    if (!original_data)
+    {
+        printf("Failed to load image\n");
+        return;
+    }
+
+    int image_size = w * h * 3;
+
+    unsigned char *data1 = malloc(image_size);
+    memcpy(data1, original_data, image_size);
+
+    filter *f1 = init_id();
+
+    seq_convolution(data1, w, h, *f1);
+
+    if (!compare_images(original_data, data1, w, h, 3))
+    {
+        printf("FAILED: ID filter equals origin image\n");
+    }
+    else
+    {
+        printf("PASSED: ID filter equals origin image\n");
+    }
 }
+
+void test_shift_filter_left_gives_id()
+{
+    int w, h, n;
+    unsigned char *original_data = stbi_load("images/mypersonalphoto.bmp", &w, &h, &n, 3);
+    if (!original_data)
+    {
+        printf("Failed to load image\n");
+        return;
+    }
+
+    int image_size = w * h * 3;
+    unsigned char *shifted_data = malloc(image_size);
+    memcpy(shifted_data, original_data, image_size);
+
+    filter *shift_filter = init_shift_left();
+
+    seq_convolution(shifted_data, w, h, *shift_filter);
+
+    int passed = 1;
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 1; x < w; x++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                int original_idx = (y * w + (x - 1)) * 3 + c;
+                int shifted_idx = (y * w + x) * 3 + c;
+
+                if (original_data[original_idx] != shifted_data[shifted_idx])
+                {
+                    passed = 0;
+                }
+            }
+        }
+    }
+
+    if (passed)
+    {
+        printf("PASSED: Shift filter moves pixels right by 1\n");
+    }
+    else
+    {
+        printf("FAILED: Shift filter doesn't move pixels correctly\n");
+    }
+
+    filter_free(shift_filter);
+    stbi_image_free(original_data);
+    free(shifted_data);
+}
+
 int main()
 {
     srand(time(NULL));
