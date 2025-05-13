@@ -1,8 +1,10 @@
 #include "stdlib.h"
 #include "stdbool.h"
 #include "stdio.h"
+
 #include <time.h>
 #include "math.h"
+
 #include "../1_task/seq.h"
 #include "../2_task/mt.h"
 
@@ -34,10 +36,6 @@ bool compare_images(const unsigned char *img1, const unsigned char *img2, int wi
         printf("Maxdiff : %d\n", maxdif);
 
         printf("Total mismatches in center region: %d\n", mismatches);
-    }
-    else
-    {
-        printf("Images match in center region!\n");
     }
 
     return is_equal;
