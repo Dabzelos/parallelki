@@ -48,6 +48,16 @@ const double sharpen_matrix[3][3] = {
     {-1, 9, -1},
     {-1, -1, -1}};
 
+const double shift_left_matrix[3][3] = {
+    {0, 0, 0},
+    {1, 0, 0},
+    {0, 0, 0}};
+
+const double shift_right_matrix[3][3] = {
+    {0, 0, 0},
+    {0, 0, 1},
+    {0, 0, 0}};
+
 filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size])
 {
     filter *f = malloc(sizeof(filter));
@@ -83,6 +93,31 @@ filter *filter_init(int size, double bias, double doubleCoeff, const double matr
     }
 
     return f;
+}
+
+filter *init_negative_filter()
+{
+    int size = 3;
+    double doubleCoeff = -1.0;
+    double bias = 255.0;
+
+    return filter_init(size, bias, doubleCoeff, ID_matrix);
+}
+
+filter *init_shift_right()
+{
+    int size = 3;
+    double doubleCoeff = 1.0;
+    double bias = 0.0;
+    return filter_init(size, bias, doubleCoeff, shift_right_matrix);
+}
+
+filter *init_shift_left()
+{
+    int size = 3;
+    double doubleCoeff = 1.0;
+    double bias = 0.0;
+    return filter_init(size, bias, doubleCoeff, shift_left_matrix);
 }
 
 filter *init_motion_from_top_left()
@@ -242,18 +277,40 @@ filter *append_filter_matrix_with_zeros(int appendix, filter *f)
 
 filter *generate_random_filter(int size)
 {
-    double matrix[size][size];
+    filter *random_filter = (filter *)malloc(sizeof(filter));
+    if (random_filter == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for filter\n");
+        exit(1);
+    }
+
+    random_filter->size = size;
+
+    random_filter->matrix = (double **)malloc(size * sizeof(double *));
+    if (random_filter->matrix == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for matrix\n");
+        exit(1);
+    }
 
     for (int i = 0; i < size; i++)
     {
+        random_filter->matrix[i] = (double *)malloc(size * sizeof(double));
+        if (random_filter->matrix[i] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed for matrix row\n");
+            exit(1);
+        }
+
         for (int j = 0; j < size; j++)
         {
-            matrix[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+            random_filter->matrix[i][j] = MIN_FACTOR + ((double)rand() / RAND_MAX) * (MAX_FACTOR - MIN_FACTOR);
         }
     }
 
-    double bias = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
-    double coeff = ((double)rand() / RAND_MAX) * 2.0;
+    random_filter->doubleCoeff = MIN_FACTOR + ((double)rand() / RAND_MAX) * (MAX_FACTOR - MIN_FACTOR);
 
-    return filter_init(size, bias, coeff, matrix);
+    random_filter->bias = 0.0;
+
+    return random_filter;
 }

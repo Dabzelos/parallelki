@@ -1,5 +1,8 @@
 #pragma once
 
+#define MIN_FACTOR 0.0005
+#define MAX_FACTOR 1.0
+
 #pragma pack(push, 1)
 typedef struct
 {
@@ -40,3 +43,9 @@ filter *filter_composition(filter *f1, filter *f2);
 filter *append_filter_matrix_with_zeros(int appendix, filter *f);
 
 filter *generate_random_filter(int size);
+
+filter *init_shift_left();
+
+filter *init_shift_right();
+
+filter *init_negative_filter();
