@@ -9,6 +9,8 @@
 #include "../1_task/seq.h"
 #include "../2_task/mt.h"
 #include "../tests/utils/test_utils.h"
+#include "../tests/mt_test/mt_test.h"
+#include "../tests/seq_test/seq_test.h"
 
 int main()
 {
@@ -30,4 +32,5 @@ int main()
     test_mt_convolution(MODE_ROW, "MultiThread by_row convolution");
     test_mt_convolution(MODE_PIXEL, "MultiThread by_pixel convolution");
     test_mt_convolution(MODE_COLUMN, "MultiThread by_collumn convolution");
+    test_mt_convolution(MODE_BLOCK, "MultiThread by_block convolution");
 }

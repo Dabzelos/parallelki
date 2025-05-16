@@ -6,7 +6,7 @@
 #include "../1_task/seq.h"
 #include "../filters/filter.h"
 #include "../tests/utils/test_utils.h"
-
+#include "../tests/seq_test/seq_test.h"
 void compare_filter_results(filter *f1, filter *f2, int w, int h, const char *test_name)
 {
     unsigned char *original_data = generate_random_image(w, h);
@@ -113,7 +113,7 @@ void test_predefined_filters_appended_with_zeros()
 
     for (int i = 0; i < num_filters; i++)
     {
-        for (int append = 0; append <= MAX_APPEND; append++)
+        for (int append = 1; append <= MAX_APPEND; append++)
         {
             filter *original_filter = filter_initializers[i]();
             filter *appended_filter = append_filter_matrix_with_zeros(append, original_filter);

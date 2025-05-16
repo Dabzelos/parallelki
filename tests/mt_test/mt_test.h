@@ -1,0 +1,1 @@
+void test_mt_convolution(ConvolutionMode MODE, const char *test_name);
