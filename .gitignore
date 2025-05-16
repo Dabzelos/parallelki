@@ -5,3 +5,5 @@ images
 *.out
 
 *.vscode
+
+valgrind_report.txt

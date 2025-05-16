@@ -124,8 +124,8 @@ void *thread_convolve_by_pixel(void *arg)
     return NULL;
 }
 
-void pthread_convolution(unsigned char *pixel_array, int w, int h,
-                         filter filter, int num_threads, ConvolutionMode mode)
+void mt_convolution(unsigned char *pixel_array, int w, int h,
+                    filter filter, int num_threads, ConvolutionMode mode)
 {
     pthread_t threads[num_threads];
     thread_args args[num_threads];

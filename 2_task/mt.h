@@ -2,6 +2,8 @@
 #include "../filters/filter.h"
 #include <stdatomic.h>
 
+#define THREAD_COUNT 4
+
 typedef struct
 {
     int w, h;
@@ -18,4 +20,4 @@ typedef enum
     MODE_PIXEL
 } ConvolutionMode;
 
-void pthread_convolution(unsigned char *pixel_array, int w, int h, filter filter, int num_threads, ConvolutionMode mode);
+void mt_convolution(unsigned char *pixel_array, int w, int h, filter filter, int num_threads, ConvolutionMode mode);

@@ -24,8 +24,8 @@ run: all
 
 
 # Для тестов
-TEST_SRC = 1_task/seq_convo.c filters/filter.c tests/utils/test_utils.c tests/seq_test/seq_test.c
-TEST_BIN = test_filters.out
+TEST_SRC = 1_task/seq_convo.c filters/filter.c tests/utils/test_utils.c tests/seq_test/seq_test.c tests/test.c tests/mt_test/mt_test.c 2_task/mt_by_row.c
+TEST_BIN = seq_convo_test.out
 
 test: $(TEST_BIN)
 
@@ -34,3 +34,18 @@ $(TEST_BIN): $(TEST_SRC)
 
 run-test: test
 	./$(TEST_BIN)
+
+
+valgrind-test: $(TEST_BIN)
+	valgrind --leak-check=full \
+	         --show-leak-kinds=all \
+	         --track-origins=yes \
+	         --error-exitcode=1 \
+	         --log-file=valgrind_report.txt \
+	         ./$(TEST_BIN)
+	@echo "Valgrind report saved to valgrind_report.txt"
+
+
+
+
+.PHONY: all test valgrind-test clean run run-test 
