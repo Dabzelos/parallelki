@@ -24,7 +24,7 @@ void test_mt_convolution(ConvolutionMode MODE, const char *test_name)
             memcpy(mt_data, orig_image, img_size);
 
             seq_convolution(seq_data, size, size, *filter);
-            mt_convolution(mt_data, size, size, *filter, THREAD_COUNT, MODE, BLOCK_SIZE);
+            mt_convolution(mt_data, size, size, *filter, THREAD_COUNT, MODE, 16);
 
             if (!compare_images(mt_data, seq_data, size, size, 3))
             {

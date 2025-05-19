@@ -24,6 +24,7 @@ int main()
     test_negative_filter_composition_gives_id();
     test_opposite_shift_filters_composition_gives_id();
     test_id_filters_composition_gives_id();
+
     /* test for matrixes appended with zeros */
     test_predefined_filters_appended_with_zeros();
     test_random_filter_appended_with_zeros();

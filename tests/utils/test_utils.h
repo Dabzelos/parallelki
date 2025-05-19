@@ -10,7 +10,7 @@ bool compare_images(const unsigned char *img1, const unsigned char *img2, int wi
 
 double get_time_in_seconds();
 
-// void measure_performance(unsigned char *data, int w, int h, int threads, filter filter);
+void measure_performance(unsigned char *data, int w, int h, int threads, filter filter);
 
 unsigned char *generate_random_image(int w, int h);
 

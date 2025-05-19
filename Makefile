@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -g -I./filters -I./libs
 
 # Пути
 FILTERS_DIR = filters
-BIN = shi.out
+BIN = convolution.out
 # Исходники
 SRC = 1_task/seq_convo.c 2_task/mt_convo.c filters/filter.c main.c tests/utils/test_utils.c
 
@@ -18,14 +18,9 @@ $(BIN): $(SRC)
 clean:
 	rm -f $(BIN)
 
-# Пример запуска
-run: all
-	./$(BIN)
-
-
 # Для тестов
 TEST_SRC = 1_task/seq_convo.c filters/filter.c tests/utils/test_utils.c tests/seq_test/seq_test.c tests/test.c tests/mt_test/mt_test.c 2_task/mt_convo.c
-TEST_BIN = seq_convo_test.out
+TEST_BIN = test.out
 
 test: $(TEST_BIN)
 

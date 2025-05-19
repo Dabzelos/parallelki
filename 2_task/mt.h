@@ -20,7 +20,7 @@ typedef enum
     MODE_ROW,
     MODE_COLUMN,
     MODE_PIXEL,
-    MODE_BLOCK
+    MODE_BLOCK,
 } ConvolutionMode;
 
 void mt_convolution(unsigned char *pixel_array, int w, int h, filter filter, int num_threads, ConvolutionMode mode, int block_size);

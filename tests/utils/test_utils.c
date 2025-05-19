@@ -50,7 +50,6 @@ double get_time_in_seconds()
     return ts.tv_sec + ts.tv_nsec / 1e9;
 }
 
-/*
 void measure_performance(unsigned char *data, int w, int h, int threads, filter filter)
 {
     double start_time, end_time;
@@ -61,21 +60,25 @@ void measure_performance(unsigned char *data, int w, int h, int threads, filter 
     printf("Sequential time: %f seconds\n", end_time - start_time);
 
     start_time = get_time_in_seconds();
-    pthread_convolution(data, w, h, filter, threads, MODE_ROW);
+    mt_convolution(data, w, h, filter, threads, MODE_ROW, 0);
     end_time = get_time_in_seconds();
     printf("Parallel (by row) time: %f seconds\n", end_time - start_time);
 
     start_time = get_time_in_seconds();
-    pthread_convolution(data, w, h, filter, threads, MODE_COLUMN);
+    mt_convolution(data, w, h, filter, threads, MODE_COLUMN, 0);
     end_time = get_time_in_seconds();
     printf("Parallel (by collumn) time: %f seconds\n", end_time - start_time);
 
     start_time = get_time_in_seconds();
-    pthread_convolution(data, w, h, filter, threads, MODE_PIXEL);
+    mt_convolution(data, w, h, filter, threads, MODE_PIXEL, 0);
     end_time = get_time_in_seconds();
     printf("Parallel (by pixel) time: %f seconds\n", end_time - start_time);
+
+    start_time = get_time_in_seconds();
+    mt_convolution(data, w, h, filter, threads, MODE_BLOCK, 40);
+    end_time = get_time_in_seconds();
+    printf("Parallel (by block) time: %f seconds\n", end_time - start_time);
 }
-*/
 
 unsigned char *generate_random_image(int w, int h)
 {
