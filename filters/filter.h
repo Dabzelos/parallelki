@@ -2,16 +2,15 @@
 
 #define MIN_FACTOR 0.0005
 #define MAX_FACTOR 1.0
+#define RANDOM_FILTER_SIZE 3
 
 #pragma pack(push, 1)
-typedef struct
-{
+typedef struct {
     unsigned char r, g, b;
 } pixel;
 #pragma pack(pop)
 
-typedef struct
-{
+typedef struct {
     double doubleCoeff;
     double bias;
     double **matrix;
@@ -28,7 +27,7 @@ filter *init_blur_soft();
 
 filter *init_blur();
 
-filter *init_gauss_smal_blur();
+filter *init_gauss_small_blur();
 
 filter *init_gauss_big_blur();
 
@@ -51,3 +50,5 @@ filter *filter_composition(filter *f1, filter *f2);
 filter *append_filter_matrix_with_zeros(int appendix, filter *f);
 
 filter *generate_random_filter(int size);
+
+filter *init_selected_filter(const char *filter_type);

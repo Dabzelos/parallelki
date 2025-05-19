@@ -1,19 +1,17 @@
-#include "stdlib.h"
-#include "stdbool.h"
-#include "stdio.h"
-
-#include <time.h>
-#include "math.h"
-#include <string.h>
-
 #include "../1_task/seq.h"
 #include "../2_task/mt.h"
-#include "../tests/utils/test_utils.h"
 #include "../tests/mt_test/mt_test.h"
 #include "../tests/seq_test/seq_test.h"
+#include "../tests/utils/test_utils.h"
+#include "math.h"
+#include "stdbool.h"
+#include "stdio.h"
+#include "stdlib.h"
 
-int main()
-{
+#include <string.h>
+#include <time.h>
+
+int main() {
     test_random_filters_composition();
 
     /* tests for filters that results are known*/

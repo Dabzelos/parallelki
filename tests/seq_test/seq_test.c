@@ -1,14 +1,14 @@
+#include "../1_task/seq.h"
+
+#include "../filters/filter.h"
+#include "../tests/seq_test/seq_test.h"
+#include "../tests/utils/test_utils.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <time.h>
-
-#include "../1_task/seq.h"
-#include "../filters/filter.h"
-#include "../tests/utils/test_utils.h"
-#include "../tests/seq_test/seq_test.h"
-void compare_filter_results(filter *f1, filter *f2, int w, int h, const char *test_name)
-{
+void compare_filter_results(filter *f1, filter *f2, int w, int h, const char *test_name) {
     unsigned char *original_data = generate_random_image(w, h);
     int image_size = w * h * 3;
 
@@ -20,14 +20,11 @@ void compare_filter_results(filter *f1, filter *f2, int w, int h, const char *te
     seq_convolution(data1, w, h, *f1);
     seq_convolution(data2, w, h, *f2);
 
-    if (!compare_images(data1, data2, w, h, 3))
-    {
+    if (!compare_images(data1, data2, w, h, 3)) {
         printf("FAILED: %s (size %dx%d)\n", test_name, w, h);
         pprint_filter(f1);
         pprint_filter(f2);
-    }
-    else
-    {
+    } else {
         printf("PASSED: %s (size %dx%d)\n", test_name, w, h);
     }
 
@@ -36,12 +33,10 @@ void compare_filter_results(filter *f1, filter *f2, int w, int h, const char *te
     free(data2);
 }
 
-void test_random_filters_composition()
-{
+void test_random_filters_composition() {
     srand(time(NULL));
 
-    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE)
-    {
+    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE) {
         unsigned char *original_data = generate_random_image(size, size);
         int image_size = size * size * 3;
 
@@ -61,16 +56,13 @@ void test_random_filters_composition()
         filter *composition = filter_composition(f1, f2);
         seq_convolution(data_composition, size, size, *composition);
 
-        if (!compare_images(data_sequential, data_composition, size, size, 3))
-        {
+        if (!compare_images(data_sequential, data_composition, size, size, 3)) {
             printf("FAILED: Random filters composition (size %dx%d, kernels %dx%d and %dx%d)\n",
                    size, size, kernel_size1, kernel_size1, kernel_size2, kernel_size2);
             pprint_filter(f1);
             pprint_filter(f2);
             pprint_filter(composition);
-        }
-        else
-        {
+        } else {
             printf("PASSED: Random filters composition (size %dx%d, kernels %dx%d and %dx%d)\n",
                    size, size, kernel_size1, kernel_size1, kernel_size2, kernel_size2);
         }
@@ -87,45 +79,33 @@ void test_random_filters_composition()
 /*
     Tests for predefined filters that apennding them with zeros gives id
 */
-void test_predefined_filters_appended_with_zeros()
-{
+void test_predefined_filters_appended_with_zeros() {
     srand(time(NULL));
 
     filter *(*filter_initializers[])() = {
-        init_motion_from_top_left,
-        init_blur_soft,
-        init_blur,
-        init_gauss_smal_blur,
-        init_gauss_big_blur,
-        init_sharpen};
+        init_motion_from_top_left, init_blur_soft,      init_blur,
+        init_gauss_smal_blur,      init_gauss_big_blur, init_sharpen};
 
-    const char *filter_names[] = {
-        "motion_from_top_left",
-        "blur_soft",
-        "blur",
-        "gauss_small_blur",
-        "gauss_big_blur",
-        "sharpen"};
+    const char *filter_names[] = {"motion_from_top_left", "blur_soft",      "blur",
+                                  "gauss_small_blur",     "gauss_big_blur", "sharpen"};
 
     const int num_filters = sizeof(filter_initializers) / sizeof(filter_initializers[0]);
 
-    int size = 600; // made this constant due to large time of computation
+    int size = 600;  // made this constant due to large time of computation
 
-    for (int i = 0; i < num_filters; i++)
-    {
-        for (int append = 1; append <= MAX_APPEND; append++)
-        {
+    for (int i = 0; i < num_filters; i++) {
+        for (int append = 1; append <= MAX_APPEND; append++) {
             filter *original_filter = filter_initializers[i]();
             filter *appended_filter = append_filter_matrix_with_zeros(append, original_filter);
 
             char test_name[256];
-            snprintf(test_name, sizeof(test_name), "%s with %d zero-append(s)", filter_names[i], append);
+            snprintf(test_name, sizeof(test_name), "%s with %d zero-append(s)", filter_names[i],
+                     append);
 
             compare_filter_results(original_filter, appended_filter, size, size, test_name);
 
             filter_free(original_filter);
-            if (appended_filter != original_filter)
-            {
+            if (appended_filter != original_filter) {
                 filter_free(appended_filter);
             }
         }
@@ -135,22 +115,19 @@ void test_predefined_filters_appended_with_zeros()
 /*
  * Tests that if we append any matrix with zeros, nothing will change
  */
-void test_random_filter_appended_with_zeros()
-{
+void test_random_filter_appended_with_zeros() {
     char test_name[256];
 
     srand(time(NULL));
 
-    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE)
-    {
-        for (int kernel_size = 1; kernel_size <= 5; kernel_size = kernel_size + 2)
-        {
+    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE) {
+        for (int kernel_size = 1; kernel_size <= 5; kernel_size = kernel_size + 2) {
             filter *f1 = generate_random_filter(kernel_size);
             filter *f2 = append_filter_matrix_with_zeros(1, f1);
 
             snprintf(test_name, sizeof(test_name),
-                     "Random filter with %d x %d matrix appended with %d zeros",
-                     kernel_size, kernel_size, 1);
+                     "Random filter with %d x %d matrix appended with %d zeros", kernel_size,
+                     kernel_size, 1);
 
             compare_filter_results(f1, f2, size, size, test_name);
 
@@ -163,33 +140,27 @@ void test_random_filter_appended_with_zeros()
 /*
  * Tests for filters which composition gives id
  */
-void test_negative_filter_composition_gives_id()
-{
+void test_negative_filter_composition_gives_id() {
     test_filter_composition(init_negative_filter(), init_negative_filter(),
                             "Composition of negative filters");
 }
 
-void test_opposite_shift_filters_composition_gives_id()
-{
+void test_opposite_shift_filters_composition_gives_id() {
     test_filter_composition(init_shift_left(), init_shift_right(),
                             "Composition of opposite shift filters");
 }
 
-void test_id_filters_composition_gives_id()
-{
-    test_filter_composition(init_id(), init_id(),
-                            "Composition of id's");
+void test_id_filters_composition_gives_id() {
+    test_filter_composition(init_id(), init_id(), "Composition of id's");
 }
 
 /*
  * Tests for filters that results are known
  */
-void test_id_filter()
-{
+void test_id_filter() {
     srand(time(NULL));
 
-    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE)
-    {
+    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE) {
         unsigned char *original_data = generate_random_image(size, size);
         int image_size = size * size * 3;
 
@@ -199,12 +170,9 @@ void test_id_filter()
         filter *f = init_id();
         seq_convolution(data, size, size, *f);
 
-        if (!compare_images(original_data, data, size, size, 3))
-        {
+        if (!compare_images(original_data, data, size, size, 3)) {
             printf("FAILED: ID filter equals origin image (size %dx%d)\n", size, size);
-        }
-        else
-        {
+        } else {
             printf("PASSED: ID filter equals origin image (size %dx%d)\n", size, size);
         }
 
@@ -214,12 +182,10 @@ void test_id_filter()
     }
 }
 
-void test_shift_filter_left()
-{
+void test_shift_filter_left() {
     srand(time(NULL));
 
-    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE)
-    {
+    for (int size = MIN_IMAGE_SIZE; size <= MAX_IMAGE_SIZE; size += STEP_SIZE) {
         unsigned char *original_data = generate_random_image(size, size);
         int image_size = size * size * 3;
 
@@ -230,34 +196,25 @@ void test_shift_filter_left()
         seq_convolution(shifted_data, size, size, *shift_filter);
 
         int passed = 1;
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 1; x < size; x++)
-            {
-                for (int c = 0; c < 3; c++)
-                {
+        for (int y = 0; y < size; y++) {
+            for (int x = 1; x < size; x++) {
+                for (int c = 0; c < 3; c++) {
                     int original_idx = (y * size + (x - 1)) * 3 + c;
                     int shifted_idx = (y * size + x) * 3 + c;
 
-                    if (original_data[original_idx] != shifted_data[shifted_idx])
-                    {
+                    if (original_data[original_idx] != shifted_data[shifted_idx]) {
                         passed = 0;
                         break;
                     }
                 }
-                if (!passed)
-                    break;
+                if (!passed) break;
             }
-            if (!passed)
-                break;
+            if (!passed) break;
         }
 
-        if (passed)
-        {
+        if (passed) {
             printf("PASSED: Shift filter moves pixels right by 1 (size %dx%d)\n", size, size);
-        }
-        else
-        {
+        } else {
             printf("FAILED: Shift filter doesn't move pixels correctly (size %dx%d)\n", size, size);
         }
 

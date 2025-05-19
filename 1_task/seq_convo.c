@@ -1,26 +1,22 @@
-#include <stdio.h>
 #include "../filters/filter.h"
 #include "math.h"
-#include <string.h>
-#include <stdlib.h>
 #include "seq.h"
 
-void seq_convolution(unsigned char *pixel_array, int w, int h, filter filter)
-{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void seq_convolution(unsigned char *pixel_array, int w, int h, filter filter) {
     pixel *result = malloc(w * h * sizeof(pixel));
 
     pixel *image = (pixel *)pixel_array;
 
-    for (int x = 0; x < w; x++)
-    {
-        for (int y = 0; y < h; y++)
-        {
+    for (int x = 0; x < w; x++) {
+        for (int y = 0; y < h; y++) {
             double red = 0.0, green = 0.0, blue = 0.0;
 
-            for (int filterY = 0; filterY < filter.size; filterY++)
-            {
-                for (int filterX = 0; filterX < filter.size; filterX++)
-                {
+            for (int filterY = 0; filterY < filter.size; filterY++) {
+                for (int filterX = 0; filterX < filter.size; filterX++) {
                     int imageX = (x - filter.size / 2 + filterX + w) % w;
                     int imageY = (y - filter.size / 2 + filterY + h) % h;
 
@@ -30,9 +26,12 @@ void seq_convolution(unsigned char *pixel_array, int w, int h, filter filter)
                 }
             }
 
-            result[(y * w + x)].r = fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
-            result[(y * w + x)].g = fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
-            result[(y * w + x)].b = fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
+            result[(y * w + x)].r =
+                fmin(fmax((int)round(filter.doubleCoeff * red + filter.bias), 0), 255);
+            result[(y * w + x)].g =
+                fmin(fmax((int)round(filter.doubleCoeff * green + filter.bias), 0), 255);
+            result[(y * w + x)].b =
+                fmin(fmax((int)round(filter.doubleCoeff * blue + filter.bias), 0), 255);
         }
     }
 
