@@ -1,6 +1,6 @@
 images
 
-.bmp
+*.bmp
 
 *.out
 
@@ -11,3 +11,5 @@ valgrind_report.txt
 helgrind.log
 
 .log
+
+bench/myenv

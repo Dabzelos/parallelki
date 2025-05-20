@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -201,7 +202,13 @@ void mt_convolution(unsigned char *pixel_array, int w, int h, filter filter, int
         pthread_create(&threads[i], NULL, thread_func, &args[i]);
     }
 
+    double start = get_time_in_seconds();
+
     for (int i = 0; i < num_threads; i++) pthread_join(threads[i], NULL);
+
+    double finish = get_time_in_seconds();
+
+    printf("convo time %lf", (finish - start));
 
     memcpy(pixel_array, result, w * h * 3);
     free(result);

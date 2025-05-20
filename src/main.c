@@ -140,7 +140,10 @@ void process_image(const ProgramArgs *args, unsigned char *data, int w, int h) {
     }
 
     if (strcmp(args->compute_mode, "seq") == 0) {
+        double start = get_time_in_seconds();
         seq_convolution(data, w, h, *selected_filter);
+        double finish = get_time_in_seconds();
+        printf("convo time %lf", finish - start);
     } else {
         if (strcmp(args->compute_mode, "by_row") == 0) {
             mt_convolution(data, w, h, *selected_filter, args->threads_num, MODE_ROW,
