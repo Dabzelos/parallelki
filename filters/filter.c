@@ -28,6 +28,11 @@ const double shift_left_matrix[3][3] = {{0, 0, 0}, {1, 0, 0}, {0, 0, 0}};
 
 const double shift_right_matrix[3][3] = {{0, 0, 0}, {0, 0, 1}, {0, 0, 0}};
 
+const double gaus_large_blur[9][9] = {
+    {1, 1, 2, 2, 2, 2, 2, 1, 1}, {1, 2, 2, 3, 3, 3, 2, 2, 1}, {2, 2, 3, 4, 5, 4, 3, 2, 2},
+    {2, 3, 4, 5, 6, 5, 4, 3, 2}, {2, 3, 5, 6, 7, 6, 5, 3, 2}, {2, 3, 4, 5, 6, 5, 4, 3, 2},
+    {2, 2, 3, 4, 5, 4, 3, 2, 2}, {1, 2, 2, 3, 3, 3, 2, 2, 1}, {1, 1, 2, 2, 2, 2, 2, 1, 1}};
+
 filter *filter_init(int size, double bias, double doubleCoeff, const double matrix[size][size]) {
     filter *f = malloc(sizeof(filter));
     f->bias = bias;
@@ -87,6 +92,13 @@ filter *init_motion_from_top_left() {
     double doubleCoeff = 1.0 / 9.0;
     double bias = 0.0;
     return filter_init(size, bias, doubleCoeff, motion_blur_matrix);
+}
+
+filter *init_gauss_large_blur() {
+    int size = 9;
+    double doubleCoeff = 1.0 / 213.0;
+    double bias = 0.0;
+    return filter_init(size, bias, doubleCoeff, gaussian_big_blur_matrix);
 }
 
 filter *init_blur_soft() {
@@ -295,6 +307,8 @@ filter *init_selected_filter(const char *filter_type) {
         return init_negative_filter();
     } else if (strcmp(filter_type, "random") == 0) {
         return generate_random_filter(RANDOM_FILTER_SIZE);
+    } else if (strcmp(filter_type, "gaus_large_blur") == 0) {
+        return init_gauss_large_blur();
     }
     return NULL;
 }

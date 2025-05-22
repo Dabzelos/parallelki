@@ -1,10 +1,11 @@
 import os
 import re
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
 PROGRAM_PATH = "./convolution.out"
-IMAGE_NAME = "5120x2880.bmp"
+IMAGE_NAME = sys.argv[1]
 IMAGE_PATH = f"images/{IMAGE_NAME}"
 IMAGE_OUTPUT_PATH = f"images/res.bmp"
 NUM_RUNS = 25
@@ -12,18 +13,20 @@ THREAD_NUM = 4
 
 ALL_MODES = ["seq", "by_row", "by_column", "by_grid", "by_pixel"]
 PARALLEL_MODES = [mode for mode in ALL_MODES if mode != "seq"]
-FILTERS = ["blur", "soft_blur", "gaus_small_blur", "sharpen", "motion",
-                               "gaus_blur", "negative"]
+FILTERS = ["soft_blur", "gaus_small_blur","negative", "sharpen","blur",
+                               "gaus_blur","motion", "gaus_large_blur"]
 
 FILTERS_DICT = {
-    "soft_blur": "soft blur(3x3)",
+    "soft_blur": "Soft blur(3x3)",
     "blur": "Blur (5x5)",
     "gaus_blur": "Gaussian Blur (5x5)",
     "motion": "Motion Blur (9x9)",
     "sharpen": "Sharpen (3x3)",
-    "negative": "Negative (3[3])",
-    "gaus_small_blur":"Gaussian small blur (3х3)"
+    "negative": "Negative (3х3])",
+    "gaus_small_blur":"Gaussian small blur (3х3)",
+    "gaus_large_blur" : "Gaussian large blur(9x9)"
 }
+
 
 OUTPUT_DIR = f"results/{IMAGE_NAME.split('.')[0]}"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -86,6 +89,7 @@ def plot_grouped(all_results):
     ax.legend(title="Mode")
     plt.tight_layout()
     plt.savefig(f"{OUTPUT_DIR}/grouped_chart.png")
+    plt.close() 
 
 BLOCK_SIZES =[16, 32, 64, 128]
 

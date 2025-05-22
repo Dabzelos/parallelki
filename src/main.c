@@ -17,8 +17,9 @@
 
 #define MAX_THREADS 16
 
-const char *valid_filters[] = {"blur",      "soft_blur", "gaus_small_blur", "sharpen", "motion",
-                               "gaus_blur", "negative",  "random",          NULL};
+const char *valid_filters[] = {
+    "blur",      "soft_blur", "gaus_small_blur", "sharpen",         "motion",
+    "gaus_blur", "negative",  "random",          "gaus_large_blur", NULL};
 const char *valid_modes[] = {"by_row", "by_column", "by_pixel", "by_grid", "seq", NULL};
 
 typedef struct {
