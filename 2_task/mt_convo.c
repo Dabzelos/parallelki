@@ -1,4 +1,5 @@
 #include "../2_task/mt.h"
+#include "../tests/utils/test_utils.h"
 
 #include <math.h>
 #include <pthread.h>
@@ -208,7 +209,7 @@ void mt_convolution(unsigned char *pixel_array, int w, int h, filter filter, int
 
     double finish = get_time_in_seconds();
 
-    printf("convo time %lf", (finish - start));
+    printf("convo time %lf\n", (finish - start));
 
     memcpy(pixel_array, result, w * h * 3);
     free(result);

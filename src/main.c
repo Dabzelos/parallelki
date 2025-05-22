@@ -6,6 +6,7 @@
 #include "../filters/filter.h"
 #include "../libs/stb_image.h"
 #include "../libs/stb_image_write.h"
+#include "../tests/utils/test_utils.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -143,7 +144,8 @@ void process_image(const ProgramArgs *args, unsigned char *data, int w, int h) {
         double start = get_time_in_seconds();
         seq_convolution(data, w, h, *selected_filter);
         double finish = get_time_in_seconds();
-        printf("convo time %lf", finish - start);
+        printf("convo time %.9lf\n", finish - start);
+
     } else {
         if (strcmp(args->compute_mode, "by_row") == 0) {
             mt_convolution(data, w, h, *selected_filter, args->threads_num, MODE_ROW,
@@ -176,6 +178,7 @@ int main(int argc, const char *argv[]) {
     printf("  Filter type: %s\n", args.filter_type);
     printf("  Compute mode: %s\n", args.compute_mode);
     printf("  Threads number: %d\n", args.threads_num);
+
     if (strcmp(args.compute_mode, "by_grid") == 0) {
         printf("  Block size: %d\n", args.block_size);
     }
@@ -186,6 +189,8 @@ int main(int argc, const char *argv[]) {
         fprintf(stderr, "Error: Input image loading failed\n");
         return EXIT_FAILURE;
     }
+    printf("  Image resolution: %dx%d\n", w, h);
+
     int image_size = w * h * 3;
 
     unsigned char *processed_data = malloc(image_size);
