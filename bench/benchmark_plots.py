@@ -87,6 +87,31 @@ def plot_grouped(all_results):
     plt.tight_layout()
     plt.savefig(f"{OUTPUT_DIR}/grouped_chart.png")
 
+BLOCK_SIZES =[16, 32, 64, 128]
+
+def benchmark_block_sizes(filters=["blur", "motion"]):
+    for filter_name in filters:
+        results = {}
+        for block_size in BLOCK_SIZES:
+            cmd = f"{PROGRAM_PATH} --filter={filter_name} --mode=by_grid {IMAGE_PATH} --block={block_size} {IMAGE_OUTPUT_PATH} --thread={THREAD_NUM}"
+            times = []
+            for _ in range(NUM_RUNS):
+                output = os.popen(f"{cmd}").read().strip()
+                match = re.search(r"convo time (\d+\.\d+)", output)
+                if match:
+                    times.append(float(match.group(1)))
+            mean, error = mean_confidence_interval(np.array(times))
+            results[block_size] = (mean, error)
+        
+        means = [results[bs][0] for bs in BLOCK_SIZES]
+        errors = [results[bs][1] for bs in BLOCK_SIZES]
+        plt.bar([str(bs) for bs in BLOCK_SIZES], means, yerr=errors, capsize=10, color="lightgreen")
+        plt.xlabel("Block Size")
+        plt.ylabel("Time (s)")
+        plt.title(f"{FILTERS_DICT[filter_name]} - by_grid Block Size Scaling")
+        plt.tight_layout()
+        plt.savefig(f"{OUTPUT_DIR}/scaling_blocksize_{filter_name}.png")
+        plt.clf()
 
 def plots_for_filters():
     all_results = {f: {"means": [], "errors": []} for f in FILTERS}
@@ -110,6 +135,8 @@ def plots_for_filters():
 def main():
 
     plots_for_filters()
+
+    benchmark_block_sizes()
 
     print(f"Готово. Результаты и графики сохранены в '{OUTPUT_DIR}'.")
 
