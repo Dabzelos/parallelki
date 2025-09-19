@@ -84,7 +84,7 @@ void test_predefined_filters_appended_with_zeros() {
 
     filter *(*filter_initializers[])() = {
         init_motion_from_top_left, init_blur_soft,      init_blur,
-        init_gauss_smal_blur,      init_gauss_big_blur, init_sharpen};
+        init_gauss_small_blur,     init_gauss_big_blur, init_sharpen};
 
     const char *filter_names[] = {"motion_from_top_left", "blur_soft",      "blur",
                                   "gauss_small_blur",     "gauss_big_blur", "sharpen"};
