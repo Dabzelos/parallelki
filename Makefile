@@ -1,10 +1,10 @@
-CC = gcc
+C = gcc
 CFLAGS = -Wall -Wextra -g -I./filters -I./libs
 
 FILTERS_DIR = filters
 BIN = convolution.out
 
-SRC = 1_task/seq_convo.c 2_task/mt_convo.c filters/filter.c src/main.c tests/utils/test_utils.c
+SRC = 1_task/seq_convo.c 2_task/mt_convo.c 3_task/pipeline.c filters/filter.c src/main.c tests/utils/test_utils.c
 
 all: $(BIN)
 
@@ -58,5 +58,4 @@ helgrind-check: $(TEST_BIN)
 format: 
 	./scripts/format.sh
 
-.PHONY: all format test valgrind-test valgrind-src clean run run-test helgrind-check
-
+.PHONY: build format test valgrind-test valgrind-src clean run-test helgrind-check

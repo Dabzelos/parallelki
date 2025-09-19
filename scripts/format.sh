@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIRS="1_task 2_task filters tests src"
+DIRS="1_task 2_task 3_task filters tests src"
 
 files=$(find $DIRS -type f \( -name "*.c" -o -name "*.h" \))
 
