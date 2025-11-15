@@ -1,0 +1,48 @@
+soft_blur
+  seq: 0.0493 ± 0.0004 s
+  by_row: 0.0121 ± 0.0001 s
+  by_column: 0.0127 ± 0.0001 s
+  by_grid: 0.0129 ± 0.0002 s
+  by_pixel: 0.0209 ± 0.0005 s
+gaus_small_blur
+  seq: 0.0477 ± 0.0006 s
+  by_row: 0.0118 ± 0.0001 s
+  by_column: 0.0126 ± 0.0001 s
+  by_grid: 0.0127 ± 0.0002 s
+  by_pixel: 0.0203 ± 0.0003 s
+negative
+  seq: 0.0453 ± 0.0008 s
+  by_row: 0.0112 ± 0.0001 s
+  by_column: 0.0122 ± 0.0002 s
+  by_grid: 0.0122 ± 0.0002 s
+  by_pixel: 0.0207 ± 0.0005 s
+sharpen
+  seq: 0.0468 ± 0.0009 s
+  by_row: 0.0111 ± 0.0001 s
+  by_column: 0.0119 ± 0.0001 s
+  by_grid: 0.0122 ± 0.0001 s
+  by_pixel: 0.0203 ± 0.0005 s
+blur
+  seq: 0.1120 ± 0.0014 s
+  by_row: 0.0267 ± 0.0002 s
+  by_column: 0.0275 ± 0.0002 s
+  by_grid: 0.0278 ± 0.0002 s
+  by_pixel: 0.0336 ± 0.0004 s
+gaus_blur
+  seq: 0.1120 ± 0.0020 s
+  by_row: 0.0268 ± 0.0002 s
+  by_column: 0.0277 ± 0.0002 s
+  by_grid: 0.0280 ± 0.0003 s
+  by_pixel: 0.0335 ± 0.0003 s
+motion
+  seq: 0.3443 ± 0.0057 s
+  by_row: 0.0814 ± 0.0015 s
+  by_column: 0.0845 ± 0.0014 s
+  by_grid: 0.0825 ± 0.0011 s
+  by_pixel: 0.0891 ± 0.0016 s
+gaus_large_blur
+  seq: 0.3460 ± 0.0061 s
+  by_row: 0.0817 ± 0.0013 s
+  by_column: 0.0823 ± 0.0014 s
+  by_grid: 0.0820 ± 0.0016 s
+  by_pixel: 0.0886 ± 0.0019 s

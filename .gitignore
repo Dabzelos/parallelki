@@ -1,0 +1,15 @@
+images
+
+*.bmp
+
+*.out
+
+*.vscode
+
+valgrind_report.txt
+
+helgrind.log
+
+.log
+
+bench/myenv

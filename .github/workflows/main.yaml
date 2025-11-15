@@ -1,0 +1,21 @@
+name: parralelini-convoluchini
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: lint
+        run: |
+          sudo chmod u+x ./scripts/ci-style-check.sh
+          ./scripts/ci-style-check.sh
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        run: |
+          make
